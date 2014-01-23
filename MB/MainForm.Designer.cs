@@ -62,16 +62,16 @@
             this.button9 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.button33 = new System.Windows.Forms.Button();
-            this.button32 = new System.Windows.Forms.Button();
             this.button31 = new System.Windows.Forms.Button();
             this.button30 = new System.Windows.Forms.Button();
             this.button29 = new System.Windows.Forms.Button();
             this.button28 = new System.Windows.Forms.Button();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button33 = new System.Windows.Forms.Button();
+            this.button34 = new System.Windows.Forms.Button();
             this.txtSite = new System.Windows.Forms.TextBox();
             this.rtb_log = new System.Windows.Forms.RichTextBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.button34 = new System.Windows.Forms.Button();
+            this.button32 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -436,8 +436,6 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.button33);
-            this.tabPage3.Controls.Add(this.button32);
             this.tabPage3.Controls.Add(this.button31);
             this.tabPage3.Controls.Add(this.button30);
             this.tabPage3.Controls.Add(this.button29);
@@ -449,26 +447,6 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "PPT";
             this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // button33
-            // 
-            this.button33.Location = new System.Drawing.Point(226, 7);
-            this.button33.Name = "button33";
-            this.button33.Size = new System.Drawing.Size(83, 38);
-            this.button33.TabIndex = 5;
-            this.button33.Text = "button33";
-            this.button33.UseVisualStyleBackColor = true;
-            this.button33.Click += new System.EventHandler(this.button33_Click);
-            // 
-            // button32
-            // 
-            this.button32.Location = new System.Drawing.Point(127, 7);
-            this.button32.Name = "button32";
-            this.button32.Size = new System.Drawing.Size(77, 38);
-            this.button32.TabIndex = 4;
-            this.button32.Text = "button32";
-            this.button32.UseVisualStyleBackColor = true;
-            this.button32.Click += new System.EventHandler(this.button32_Click);
             // 
             // button31
             // 
@@ -510,6 +488,39 @@
             this.button28.UseVisualStyleBackColor = true;
             this.button28.Click += new System.EventHandler(this.button28_Click);
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.button32);
+            this.tabPage4.Controls.Add(this.button33);
+            this.tabPage4.Controls.Add(this.button34);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(812, 267);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "tabPage4";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // button33
+            // 
+            this.button33.Location = new System.Drawing.Point(121, 6);
+            this.button33.Name = "button33";
+            this.button33.Size = new System.Drawing.Size(111, 38);
+            this.button33.TabIndex = 6;
+            this.button33.Text = "从下载目录更新";
+            this.button33.UseVisualStyleBackColor = true;
+            this.button33.Click += new System.EventHandler(this.button33_Click_1);
+            // 
+            // button34
+            // 
+            this.button34.Location = new System.Drawing.Point(6, 6);
+            this.button34.Name = "button34";
+            this.button34.Size = new System.Drawing.Size(95, 38);
+            this.button34.TabIndex = 0;
+            this.button34.Text = "循环下载ppt";
+            this.button34.UseVisualStyleBackColor = true;
+            this.button34.Click += new System.EventHandler(this.button34_Click);
+            // 
             // txtSite
             // 
             this.txtSite.Location = new System.Drawing.Point(12, 311);
@@ -526,26 +537,15 @@
             this.rtb_log.TabIndex = 2;
             this.rtb_log.Text = "";
             // 
-            // tabPage4
+            // button32
             // 
-            this.tabPage4.Controls.Add(this.button34);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(812, 267);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "tabPage4";
-            this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // button34
-            // 
-            this.button34.Location = new System.Drawing.Point(20, 42);
-            this.button34.Name = "button34";
-            this.button34.Size = new System.Drawing.Size(92, 61);
-            this.button34.TabIndex = 0;
-            this.button34.Text = "button34";
-            this.button34.UseVisualStyleBackColor = true;
-            this.button34.Click += new System.EventHandler(this.button34_Click);
+            this.button32.Location = new System.Drawing.Point(6, 126);
+            this.button32.Name = "button32";
+            this.button32.Size = new System.Drawing.Size(95, 41);
+            this.button32.TabIndex = 7;
+            this.button32.Text = "button32";
+            this.button32.UseVisualStyleBackColor = true;
+            this.button32.Click += new System.EventHandler(this.button32_Click_1);
             // 
             // MainForm
             // 
@@ -611,10 +611,10 @@
         private System.Windows.Forms.Button button29;
         private System.Windows.Forms.Button button30;
         private System.Windows.Forms.Button button31;
-        private System.Windows.Forms.Button button32;
-        private System.Windows.Forms.Button button33;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Button button34;
+        private System.Windows.Forms.Button button33;
+        private System.Windows.Forms.Button button32;
     }
 }
 

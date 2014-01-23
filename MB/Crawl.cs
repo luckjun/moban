@@ -1240,11 +1240,11 @@ namespace MB
 
                             //Regex rxid = new Regex("class=\"btn btn-icon live-preview\"", RegexOptions.IgnoreCase);
                             
-                            Regex rxid = new Regex("<a href=\"/item/(.*?)\" role=\"button\" class=\"btn btn-icon live-preview\"", RegexOptions.IgnoreCase);
+                            Regex rxid = new Regex("<a href=\"/item/(.*?)\" role=\"button\" class=\"btn-icon live-preview\"", RegexOptions.IgnoreCase);
                             MatchCollection mcrxid = rxid.Matches(pageBody);
                             foreach (Match ml in mcrxid)
                             {
-                                model.Demo = "http://themeforest.net" + ml.Groups[1].Value.Trim();
+                                model.Demo = "http://themeforest.net/item/" + ml.Groups[1].Value.Trim();
                                 form.AddMessage("Demo:" + model.Demo, MainForm.richTextBoxC);
                                 break;
                             }

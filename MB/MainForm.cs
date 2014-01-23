@@ -18,6 +18,8 @@ using Moban.DAL;
 using QConnectSDK.Context;
 using Microsoft.Win32;
 using System.Diagnostics;
+using Microsoft.Office.Interop.PowerPoint;
+using Microsoft.Office.Core;
 
 namespace MB
 {
@@ -423,7 +425,7 @@ namespace MB
                     {
                         MBPicDAL bll = new MBPicDAL();
                         DataSet ds = bll.GetNeedDownImageList();
-                        DataTable dt = ds.Tables[0];
+                        System.Data.DataTable dt = ds.Tables[0];
                         if (dt.Rows.Count == 0)
                         {
                             form.AddMessage(DateTime.Now + "...............全部完成.............", MainForm.richTextBoxC);
@@ -503,7 +505,7 @@ namespace MB
                 {
                     MobanDAL bll = new MobanDAL();
                     DataSet ds = bll.GetNeedAnalyzeList("templatemonster.com");
-                    DataTable dt = ds.Tables[0];
+                    System.Data.DataTable dt = ds.Tables[0];
                     form.AddMessage(DateTime.Now + "....抓取循环开始...", MainForm.richTextBoxC);
                      
                    // string pageBody = string.Empty;
@@ -616,7 +618,7 @@ namespace MB
                     {
                         MobanDAL bll = new MobanDAL();
                         DataSet ds = bll.GetNeedAnalyzeTypeList();
-                        DataTable dt = ds.Tables[0];
+                        System.Data.DataTable dt = ds.Tables[0];
                         form.AddMessage(DateTime.Now + "....抓取循环开始...", MainForm.richTextBoxC);
 
                         // string pageBody = string.Empty;
@@ -732,7 +734,7 @@ namespace MB
                     MobanDAL bll = new MobanDAL();
                     MBPicDAL picdal = new MBPicDAL();
                     DataSet ds = bll.GetNeedAnalyzeList("Themeforest.net");
-                    DataTable dt = ds.Tables[0];
+                    System.Data.DataTable dt = ds.Tables[0];
                     form.AddMessage(DateTime.Now + "....抓取循环开始...", MainForm.richTextBoxC);
                     Hashtable imgHash = new Hashtable();
 
@@ -864,7 +866,7 @@ namespace MB
                     MobanDAL bll = new MobanDAL();
                     MBPicDAL picdal = new MBPicDAL();
                     DataSet ds = bll.GetNeedAnalyzeList("elemisfreebies.com");
-                    DataTable dt = ds.Tables[0];
+                    System.Data.DataTable dt = ds.Tables[0];
                     form.AddMessage(DateTime.Now + "....抓取循环开始...", MainForm.richTextBoxC);
                     Hashtable imgHash = new Hashtable();
 
@@ -993,7 +995,7 @@ namespace MB
                     MobanDAL bll = new MobanDAL();
                     MBPicDAL picdal = new MBPicDAL();
                     DataSet ds = bll.GetNeedAnalyzeList("freepsdfiles.net");
-                    DataTable dt = ds.Tables[0];
+                    System.Data.DataTable dt = ds.Tables[0];
                     form.AddMessage(DateTime.Now + "....抓取循环开始...", MainForm.richTextBoxC);
                     Hashtable imgHash = new Hashtable();
 
@@ -1122,7 +1124,7 @@ namespace MB
                     MobanDAL bll = new MobanDAL();
                     MBPicDAL picdal = new MBPicDAL();
                     DataSet ds = bll.GetNeedAnalyzeList("css-free-templates.com");
-                    DataTable dt = ds.Tables[0];
+                    System.Data.DataTable dt = ds.Tables[0];
                     form.AddMessage(DateTime.Now + "....抓取循环开始...", MainForm.richTextBoxC);
                     Hashtable imgHash = new Hashtable();
 
@@ -1533,13 +1535,13 @@ namespace MB
                 the_rar = the_Obj.ToString();
                 the_Reg.Close();
                 the_rar = the_rar.Substring(1, the_rar.Length - 7);
-                Directory.CreateDirectory(Application.StartupPath+unRarPatch);
-                the_Info = "e   " + rarName + "  " + Application.StartupPath + unRarPatch + " -y";
+                Directory.CreateDirectory(System.Windows.Forms.Application.StartupPath+unRarPatch);
+                the_Info = "e   " + rarName + "  " + System.Windows.Forms.Application.StartupPath + unRarPatch + " -y";
                 the_StartInfo = new ProcessStartInfo();
                 the_StartInfo.FileName = the_rar;
                 the_StartInfo.Arguments = the_Info;
                 the_StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                the_StartInfo.WorkingDirectory = Application.StartupPath + rarPatch;//获取压缩包路径  
+                the_StartInfo.WorkingDirectory = System.Windows.Forms.Application.StartupPath + rarPatch;//获取压缩包路径  
                 the_Process = new Process();
                 the_Process.StartInfo = the_StartInfo;
                 the_Process.Start();
@@ -1550,7 +1552,7 @@ namespace MB
             {
                 throw ex;
             }
-            return Application.StartupPath + unRarPatch;
+            return System.Windows.Forms.Application.StartupPath + unRarPatch;
         }
 
         private void button31_Click(object sender, EventArgs e)
@@ -1591,18 +1593,7 @@ namespace MB
 
         private void button32_Click(object sender, EventArgs e)
         {
-            try
-            {
-                CheckFiles checkFiles = new CheckFiles(this, txtSite.Text);
-                Thread t = new Thread(checkFiles.AutoCheckFiles);
-                t.IsBackground = true;
-                t.Start();
-                rtb_C.Clear();
-            }
-            catch (Exception ex)
-            {
-                rtb_C.AppendText(ex.Message);
-            }
+           
         }
 
         private void button33_Click(object sender, EventArgs e)
@@ -1629,9 +1620,82 @@ namespace MB
                 rtb_C.AppendText(ex.Message);
             }
         }
-   
-      
-    
+
+        private void button33_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                CheckFiles checkFiles = new CheckFiles(this, txtSite.Text);
+                Thread t = new Thread(checkFiles.AutoCheckFiles);
+                t.IsBackground = true;
+                t.Start();
+                rtb_C.Clear();
+            }
+            catch (Exception ex)
+            {
+                rtb_C.AppendText(ex.Message);
+            }
+        }
+
+        private void button32_Click_1(object sender, EventArgs e)
+        {
+            string fileFolders = txtSite.Text;
+            string strKeyWord = "1ppt";
+            ApplicationClass pptApplication = new ApplicationClass();
+             DirectoryInfo TheFolder = new DirectoryInfo(fileFolders);
+            Hashtable ht = new Hashtable();
+            //遍历文件夹
+            foreach (DirectoryInfo NextFolder in TheFolder.GetDirectories())
+            {
+                foreach (FileInfo file in NextFolder.GetFiles())
+                {
+                    if (file.Extension == ".html")
+                    {
+                        file.Delete();
+                        continue;
+                    }
+
+                    if (file.Extension==".ppt")
+                    {
+                        Presentation pptPresentation = pptApplication.Presentations.Open(file.FullName, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
+                        foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in pptPresentation.Slides)
+                        {
+                            slide.Export(@"D:\Personal\aaa.jpg", "jpg", 0, 0);
+                            foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                            {
+                                if (MsoTriState.msoTrue == shape.HasTextFrame)
+                                {
+                                    TextRange oText = null;
+                                    //shape.TextFrame.TextRange.Text.Replace("1ppt.com", "pptcn.cn");
+                                    shape.TextFrame.TextRange.Replace("1ppt.com", "pptcn.cn", 0, MsoTriState.msoFalse, MsoTriState.msoFalse);
+                                    //oText = shape.TextFrame.TextRange.Find(strKeyWord, 0, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue);
+                                    //if (oText != null)
+                                    //{
+                                    //    MessageBox.Show("文档中包含指定的关键字  ！", "搜索结果", MessageBoxButtons.OK);
+                                    //    slide.Delete();
+                                    //}
+                                }
+
+                                //shape.Delete();
+                                pptPresentation.SaveAs(@"D:\Personal\bb1.ppt", Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType.ppSaveAsPresentation, MsoTriState.msoTrue);
+                                //pptPresentation.SlideShowSettings.Run();
+                            }
+                        }
+                        pptPresentation.Save();
+                    }
+
+                }
+            }
+
+            //string str1 = @"D:\Personal\aaa.jpg";
+            //string str = @"D:\Personal\aaa.ppt";
+           
+
+            
+            
+            //pptPresentation.Slides.FindBySlideID(0).Export(str1, "jpg", 320, 240);
+            
+        }    
     
     }
 }
