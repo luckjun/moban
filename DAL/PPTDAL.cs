@@ -131,6 +131,8 @@ namespace Moban.DAL
             string strSql = "select mPic from moban";
             return DbHelperSQL.Query(strSql.ToString());
         }
+        
+        
         public DataSet GetNeedDownBodyList()
         {
             string strSql = "select id,url from moban where isdownload = 0 or isdownload is null order by id asc";
@@ -179,7 +181,7 @@ namespace Moban.DAL
 
         public PPTInfo GetModelByFileName(string filename)
         {
-            string strSql = string.Format("select  top 1 * from PPT  where downlink like '%/{0}'", filename);
+            string strSql = string.Format("select  top 1 id,IsDown,DownLink,body from PPT  where downlink like '%/{0}'", filename);
             PPTInfo model = new PPTInfo();
             DataSet ds = DbHelperSQL.Query(strSql.ToString());
             if (ds.Tables[0].Rows.Count > 0)
@@ -192,6 +194,7 @@ namespace Moban.DAL
                 {
                     model.IsDown = int.Parse(ds.Tables[0].Rows[0]["IsDown"].ToString());
                 }
+                model.Body = ds.Tables[0].Rows[0]["body"].ToString();
                 model.DownLink = ds.Tables[0].Rows[0]["DownLink"].ToString();
                 return model;
             }
@@ -260,21 +263,29 @@ namespace Moban.DAL
 
         }
 
+ 
+
         /// <summary>
         /// 更新demo
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool UpdateScreenshots(Model.MobanInfo model)
+        public bool PPTArrangeWithFile(PPTInfo model)
         {
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("Update moban set Screenshots=@Screenshots  where Id=@Id;");
+            strSql.Append("Update ppt set Pages=@Pages,IsHavePPT=@IsHavePPT,Keywords=@Keywords,Description=@Description where Id=@Id;");
             SqlParameter[] parameters = {                   
-                    new SqlParameter("@Screenshots", SqlDbType.NVarChar),                    
+                    new SqlParameter("@Pages", SqlDbType.Int),        
+                    new SqlParameter("@IsHavePPT", SqlDbType.Int),        
+                    new SqlParameter("@Keywords", SqlDbType.NVarChar),        
+                    new SqlParameter("@Description", SqlDbType.NVarChar),        
                     new SqlParameter("@Id", SqlDbType.Int)
                                         };
-            parameters[0].Value = model.Screenshots;
-            parameters[1].Value = model.Id;
+            parameters[0].Value = model.Pages;
+            parameters[1].Value = model.IsHavePPT;
+            parameters[2].Value = model.Keywords;
+            parameters[3].Value = model.Description;
+            parameters[4].Value = model.Id;
             int obj = DbHelperSQL.ExecuteSql(strSql.ToString(), parameters);
             return obj == 0 ? false : true;
         }
