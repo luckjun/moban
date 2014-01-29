@@ -67,11 +67,13 @@
             this.button29 = new System.Windows.Forms.Button();
             this.button28 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button32 = new System.Windows.Forms.Button();
             this.button33 = new System.Windows.Forms.Button();
             this.button34 = new System.Windows.Forms.Button();
             this.txtSite = new System.Windows.Forms.TextBox();
             this.rtb_log = new System.Windows.Forms.RichTextBox();
-            this.button32 = new System.Windows.Forms.Button();
+            this.button35 = new System.Windows.Forms.Button();
+            this.button36 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -490,6 +492,8 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.button36);
+            this.tabPage4.Controls.Add(this.button35);
             this.tabPage4.Controls.Add(this.button32);
             this.tabPage4.Controls.Add(this.button33);
             this.tabPage4.Controls.Add(this.button34);
@@ -500,6 +504,16 @@
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "tabPage4";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // button32
+            // 
+            this.button32.Location = new System.Drawing.Point(6, 126);
+            this.button32.Name = "button32";
+            this.button32.Size = new System.Drawing.Size(95, 41);
+            this.button32.TabIndex = 7;
+            this.button32.Text = "PPT处理";
+            this.button32.UseVisualStyleBackColor = true;
+            this.button32.Click += new System.EventHandler(this.button32_Click_1);
             // 
             // button33
             // 
@@ -537,15 +551,25 @@
             this.rtb_log.TabIndex = 2;
             this.rtb_log.Text = "";
             // 
-            // button32
+            // button35
             // 
-            this.button32.Location = new System.Drawing.Point(6, 126);
-            this.button32.Name = "button32";
-            this.button32.Size = new System.Drawing.Size(95, 41);
-            this.button32.TabIndex = 7;
-            this.button32.Text = "button32";
-            this.button32.UseVisualStyleBackColor = true;
-            this.button32.Click += new System.EventHandler(this.button32_Click_1);
+            this.button35.Location = new System.Drawing.Point(121, 126);
+            this.button35.Name = "button35";
+            this.button35.Size = new System.Drawing.Size(111, 41);
+            this.button35.TabIndex = 8;
+            this.button35.Text = "合并图片";
+            this.button35.UseVisualStyleBackColor = true;
+            this.button35.Click += new System.EventHandler(this.button35_Click);
+            // 
+            // button36
+            // 
+            this.button36.Location = new System.Drawing.Point(277, 126);
+            this.button36.Name = "button36";
+            this.button36.Size = new System.Drawing.Size(93, 41);
+            this.button36.TabIndex = 9;
+            this.button36.Text = "button36";
+            this.button36.UseVisualStyleBackColor = true;
+            this.button36.Click += new System.EventHandler(this.button36_Click);
             // 
             // MainForm
             // 
@@ -615,6 +639,8 @@
         private System.Windows.Forms.Button button34;
         private System.Windows.Forms.Button button33;
         private System.Windows.Forms.Button button32;
+        private System.Windows.Forms.Button button35;
+        private System.Windows.Forms.Button button36;
     }
 }
 

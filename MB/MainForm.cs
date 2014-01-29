@@ -20,6 +20,8 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Office.Core;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace MB
 {
@@ -1639,62 +1641,390 @@ namespace MB
 
         private void button32_Click_1(object sender, EventArgs e)
         {
-            string fileFolders = txtSite.Text;
-            string strKeyWord = "1ppt";
-            ApplicationClass pptApplication = new ApplicationClass();
-             DirectoryInfo TheFolder = new DirectoryInfo(fileFolders);
-            Hashtable ht = new Hashtable();
-            //遍历文件夹
-            foreach (DirectoryInfo NextFolder in TheFolder.GetDirectories())
+            try
             {
-                foreach (FileInfo file in NextFolder.GetFiles())
-                {
-                    if (file.Extension == ".html")
-                    {
-                        file.Delete();
-                        continue;
-                    }
+                PPTManager pptManager = new PPTManager(this,txtSite.Text);
 
-                    if (file.Extension==".ppt")
-                    {
-                        Presentation pptPresentation = pptApplication.Presentations.Open(file.FullName, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
-                        foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in pptPresentation.Slides)
-                        {
-                            slide.Export(@"D:\Personal\aaa.jpg", "jpg", 0, 0);
-                            foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                            {
-                                if (MsoTriState.msoTrue == shape.HasTextFrame)
-                                {
-                                    TextRange oText = null;
-                                    //shape.TextFrame.TextRange.Text.Replace("1ppt.com", "pptcn.cn");
-                                    shape.TextFrame.TextRange.Replace("1ppt.com", "pptcn.cn", 0, MsoTriState.msoFalse, MsoTriState.msoFalse);
-                                    //oText = shape.TextFrame.TextRange.Find(strKeyWord, 0, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue);
-                                    //if (oText != null)
-                                    //{
-                                    //    MessageBox.Show("文档中包含指定的关键字  ！", "搜索结果", MessageBoxButtons.OK);
-                                    //    slide.Delete();
-                                    //}
-                                }
+                Thread t = new Thread(pptManager.PPTArrangeWithFile);
+                t.IsBackground = true;
+                t.Start();
+                rtb_C.Clear();
+            }
+            catch (Exception ex)
+            {
+                rtb_C.AppendText(ex.Message);
+            }
+            
+        }
 
-                                //shape.Delete();
-                                pptPresentation.SaveAs(@"D:\Personal\bb1.ppt", Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType.ppSaveAsPresentation, MsoTriState.msoTrue);
-                                //pptPresentation.SlideShowSettings.Run();
-                            }
-                        }
-                        pptPresentation.Save();
-                    }
+        //生成图片
+        public void ExportImages(string filePath, Microsoft.Office.Interop.PowerPoint.Slide slide, int index,int width)
+        {
+            if (!Directory.Exists(filePath))
+                Directory.CreateDirectory(filePath);
+            slide.Export(filePath + "\\" + index + ".jpg", "jpg", width, (int)(slide.Application.Height * width / slide.Application.Width));
+        }
 
-                }
+        public void CreateIndexImg(string fileFolders,int id)
+        {
+            
+
+            DirectoryInfo TheFolder = new DirectoryInfo(fileFolders);
+            var imgFiles = from file in
+                               Directory.EnumerateFiles(fileFolders)
+                           where file.ToLower().EndsWith(".jpg")
+                           select file;
+            List<string> imgList = new List<string>();
+            int mod = imgFiles.Count<string>() % 3;
+            imgList = imgFiles.ToList();
+            switch (mod)
+            {
+                case 1:
+                    imgList.Remove("1.jpg");
+                    break;
+                case 2:
+                    imgList.Add("D:\\Personal\\1.jpg");
+                    break;
+                default:
+                    break;
             }
 
-            //string str1 = @"D:\Personal\aaa.jpg";
-            //string str = @"D:\Personal\aaa.ppt";
-           
+            if (imgFiles.Count<string>() == 1)
+            {
+                Bitmap b1 = new Bitmap(fileFolders + "1.jpg");          
+                Size size = new System.Drawing.Size();
+                size.Width = 650;
+                size.Height = (int)b1.Height * 660 / b1.Width;
+                Bitmap aImage = GetImageThumb(b1, size);
+                SaveAsJPEG(aImage, fileFolders.Replace("n\\", "") + id + ".jpg", 50);
+            }
+            else
+            {
+                int row = imgList.Count / 5 + 1;
+                if (row > 3)
+                {
+                    row = 3;
+                }
+                Bitmap b1 = new Bitmap(fileFolders + "1.jpg");
+                int height = (int)b1.Height * 660 / b1.Width ;
+                int rh = (int)b1.Height * 126 / b1.Width ;
 
-            
-            
-            //pptPresentation.Slides.FindBySlideID(0).Export(str1, "jpg", 320, 240);
-            
+                Size size = new System.Drawing.Size();
+                size.Width = 660;
+                size.Height = height;
+                Bitmap indexImage = GetImageThumb(b1, size);
+
+                Bitmap bImage = new Bitmap(660, height + (rh + 5) * row + 10);
+                Graphics g = Graphics.FromImage(bImage);
+                g.Clear(System.Drawing.Color.White);
+                g.DrawImage(indexImage, 0, 0, 660, height);
+
+                int i = 0;
+                foreach (string item in imgList)
+                {
+                    Bitmap b = new Bitmap(item);
+                    int left = 10 + (i % 5) * 10 + (i % 5) * 120;
+                    int top = 5 + height + (i / 5) * 5 + (i / 5) * rh;
+                    g.DrawImage(b, left, top, 120, rh);
+                    i++;
+                    if (i==15)
+                    {
+                        break;
+                    }
+                    rtb_C.AppendText(i + " : " + left + "  " + top + "\r\n");
+                }
+
+                MessageBox.Show(i.ToString());
+                SaveAsJPEG(bImage, fileFolders.Replace("n\\", "") + id + ".jpg", 50);
+
+                //aImage.Save(fileFolders.Replace("n\\", "") + "index2.jpg", System.Drawing.Imaging.ImageFormat.Bmp);
+            }
+        }
+
+        //压缩图片
+        public Bitmap GetImageThumb(Bitmap mg, Size newSize)
+        {
+            double ratio = 0d;
+            double myThumbWidth = 0d;
+            double myThumbHeight = 0d;
+            int x = 0;
+            int y = 0;
+
+            Bitmap bp;
+
+            if ((mg.Width / Convert.ToDouble(newSize.Width)) > (mg.Height /
+            Convert.ToDouble(newSize.Height)))
+                ratio = Convert.ToDouble(mg.Width) / Convert.ToDouble(newSize.Width);
+            else
+                ratio = Convert.ToDouble(mg.Height) / Convert.ToDouble(newSize.Height);
+            myThumbHeight = Math.Ceiling(mg.Height / ratio);
+            myThumbWidth = Math.Ceiling(mg.Width / ratio);
+
+            Size thumbSize = new Size((int)newSize.Width, (int)newSize.Height);
+            bp = new Bitmap(newSize.Width, newSize.Height);
+            x = (newSize.Width - thumbSize.Width) / 2;
+            y = (newSize.Height - thumbSize.Height);
+            System.Drawing.Graphics g = Graphics.FromImage(bp);
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Rectangle rect = new Rectangle(x, y, thumbSize.Width, thumbSize.Height);
+            g.DrawImage(mg, rect, 0, 0, mg.Width, mg.Height, GraphicsUnit.Pixel);
+
+            return bp;
+        }
+
+        public static bool GetPicThumbnail(string sFile, string outPath, int flag)
+        {
+            System.Drawing.Image iSource = System.Drawing.Image.FromFile(sFile);
+            ImageFormat tFormat = iSource.RawFormat;
+
+            //以下代码为保存图片时，设置压缩质量  
+            EncoderParameters ep = new EncoderParameters();
+            long[] qy = new long[1];
+            qy[0] = flag;//设置压缩的比例1-100  
+            EncoderParameter eParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, qy);
+            ep.Param[0] = eParam;
+            try
+            {
+                ImageCodecInfo[] arrayICI = ImageCodecInfo.GetImageEncoders();
+                ImageCodecInfo jpegICIinfo = null;
+                for (int x = 0; x < arrayICI.Length; x++)
+                {
+                    if (arrayICI[x].FormatDescription.Equals("JPEG"))
+                    {
+                        jpegICIinfo = arrayICI[x];
+                        break;
+                    }
+                }
+                if (jpegICIinfo != null)
+                {
+                    iSource.Save(outPath, jpegICIinfo, ep);//dFile是压缩后的新路径  
+                }
+                else
+                {
+                    iSource.Save(outPath, tFormat);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                iSource.Dispose();
+                iSource.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 保存为JPEG格式，支持压缩质量选项
+        /// </summary>
+        /// <param name="bmp">原始位图</param>
+        /// <param name="FileName">新文件地址</param>
+        /// <param name="Qty">压缩质量，越大越好，文件也越大(0-100)</param>
+        /// <returns>成功标志</returns>
+        public static bool SaveAsJPEG(Bitmap bmp, string FileName, int Qty)
+        {
+            try
+            {
+                EncoderParameter p;
+                EncoderParameters ps;
+
+                ps = new EncoderParameters(1);
+
+                p = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, Qty);
+                ps.Param[0] = p;
+
+                bmp.Save(FileName, GetCodecInfo("image/jpeg"), ps);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+       
+        /// <summary>
+        /// 保存JPG时用
+        /// </summary>
+        /// <param name="mimeType"></param>
+        /// <returns>得到指定mimeType的ImageCodecInfo</returns>
+        private static ImageCodecInfo GetCodecInfo(string mimeType)
+        {
+            ImageCodecInfo[] CodecInfo = ImageCodecInfo.GetImageEncoders();
+            foreach (ImageCodecInfo ici in CodecInfo)
+            {
+                if (ici.MimeType == mimeType) return ici;
+            }
+            return null;
+        }
+
+
+        private Bitmap CreateNodeImg(string txt, Color txtColor)
+        {
+            if (txtColor == Color.Transparent)
+                txtColor = Color.Black;
+            Bitmap newBitMap = new Bitmap(12, 14);
+            Graphics g = Graphics.FromImage(newBitMap);
+            if (txtColor != Color.Black)
+            {
+                g.Clear(txtColor);//背景色
+            }
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            FontFamily fm = new FontFamily("Arial");
+
+            System.Drawing.Font font = new System.Drawing.Font(fm, 12, FontStyle.Regular, GraphicsUnit.Pixel);
+            SolidBrush sb = new SolidBrush(Color.Black);
+            g.DrawString(txt, font, sb, new PointF(0, 0));
+            g.Dispose();
+            return newBitMap;
+        }
+
+ 
+        /// <summary>
+        /// 合并图片
+        /// </summary>
+        /// <param name="maps"></param>
+        /// <returns></returns>
+        private Bitmap MergerImg(params Bitmap[] maps)
+        {
+            int i = maps.Length;
+            if (i == 0)
+                throw new Exception("图片数不能够为0");
+            //创建要显示的图片对象,根据参数的个数设置宽度
+            Bitmap backgroudImg = new Bitmap(i * 12, 16);
+            Graphics g = Graphics.FromImage(backgroudImg);
+            //清除画布,背景设置为白色
+            g.Clear(System.Drawing.Color.White);
+            for (int j = 0; j < i; j++)
+            {
+                g.DrawImage(maps[j], j * 11, 0, maps[j].Width, maps[j].Height);
+            }
+            g.Dispose();
+            return backgroudImg;
+        }
+  
+        
+        /// <summary>
+        /// 合并图片
+        /// </summary>
+        /// <param name="bitMapDic"></param>
+        /// <returns></returns>
+        private Bitmap MergerImg(Dictionary<string, Bitmap> bitMapDic)
+        {
+            if (bitMapDic == null || bitMapDic.Count == 0)
+                throw new Exception("图片数不能够为0");
+            //创建要显示的图片对象,根据参数的个数设置宽度
+            Bitmap backgroudImg = new Bitmap(bitMapDic.Count * 12, 16);
+            Graphics g = Graphics.FromImage(backgroudImg);
+            //清除画布,背景设置为白色
+            g.Clear(System.Drawing.Color.White);
+            int j = 0;
+            foreach (KeyValuePair<string, Bitmap> entry in bitMapDic)
+            {
+                Bitmap map = entry.Value;
+                g.DrawImage(map, j * 11, 0, map.Width, map.Height);
+                j++;
+            }
+            g.Dispose();
+            return backgroudImg;
+
+            //合并图片还可以：
+            //int i = maps.Length;
+            //if (i == 0)
+            //    throw new Exception("图片数不能够为0");
+            ////创建要显示的图片对象,根据参数的个数设置宽度
+            //Bitmap backgroudImg = new Bitmap(i * 16, 16);
+            //Graphics g = Graphics.FromImage(backgroudImg);
+            ////清除画布,背景设置为白色
+            //g.Clear(System.Drawing.Color.White);
+            //g.DrawImageUnscaled(maps[0], 0, 0);
+            //g.DrawImageUnscaled(maps[1], maps[0].Width, 0);
+            //g.Dispose();
+            //return backgroudImg;
+        }
+ 
+
+
+
+        private void button35_Click(object sender, EventArgs e)
+        {
+            string fileFolders = "D:\\Personal\\1";
+            DirectoryInfo TheFolder = new DirectoryInfo(fileFolders);
+            Hashtable ht = new Hashtable();
+            //遍历文件夹
+            //foreach (FileInfo file in TheFolder.GetFiles())
+            //{
+
+            //try
+            //{
+                var imgFiles = from file in
+                                Directory.EnumerateFiles(fileFolders)
+                            where file.ToLower().EndsWith(".jpg")
+                            select file;
+
+                foreach (var imgFile in imgFiles)
+                {
+                    Console.WriteLine("{0}", imgFile);
+                }
+                Console.WriteLine("{0} files found.", imgFiles.Count<string>().ToString());
+            //}
+            //catch (UnauthorizedAccessException UAEx)
+            //{
+            //    Console.WriteLine(UAEx.Message);
+            //}
+            //catch (PathTooLongException PathEx)
+            //{
+            //    Console.WriteLine(PathEx.Message);
+            //}
+
+            //}
+                List<string> list = new List<string>();
+                int mod = imgFiles.Count<string>() % 3;
+             list = imgFiles.ToList();
+             switch (mod)
+             {
+                 case 1:
+                     list.Remove("0.jpg");
+                     break;
+                 case 2:
+                     list.Add("D:\\Personal\\1.jpg");
+                     break;
+                 default:
+                     break;
+             }
+                
+             //double[] arr = new double[50];
+             //List<double> list = arr.ToList();
+             //list.RemoveAt(5 + 1);
+             //double[] newarr = list.ToArray();
+
+            string jpg1 = "D:\\Personal\\1.jpg";
+            Bitmap bImage = new Bitmap(650,700);
+            //加载4张图片
+            Bitmap b1 = new Bitmap(jpg1);
+            Bitmap b2 = new Bitmap(jpg1);
+            Bitmap b3 = new Bitmap(jpg1);
+            Bitmap b4 = new Bitmap(jpg1);
+            //依次写入图片就行行了啊
+            //Graphics g = bImage.GetGraphics();
+            Graphics g = Graphics.FromImage(bImage);
+            g.Clear(System.Drawing.Color.Azure);
+
+            g.DrawImage(b1, 0, 0, b1.Width, b1.Height);
+            g.DrawImage(b1, b1.Width, b1.Height, b2.Width, b2.Height);
+            g.DrawImage(b1, 0, b1.Height, b3.Width, b3.Height);
+            g.DrawImage(b1, b1.Width, b1.Height, b4.Width, b4.Height);
+            string filename = @"D:\Personal\2.jpg";
+            bImage.Save(filename, System.Drawing.Imaging.ImageFormat.Bmp);
+        }
+
+        private void button36_Click(object sender, EventArgs e)
+        {
+            CreateIndexImg("D:\\MYPPT\\images\\41484\\n\\",41484);
         }    
     
     }
