@@ -21,5 +21,10 @@ namespace Moban.Model
         public string Body { get; set; }
         public string DownLink { get; set; }
         public int IsDown { get; set; }
+        public int Pages { get; set; }
+        public int IsHavePPT { get; set; }
+        public string Keywords { get; set; }
+        public string Description { get; set; }
+
     }
 }
