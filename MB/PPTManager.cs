@@ -49,7 +49,7 @@ namespace MB
                 ApplicationClass pptApplication = new ApplicationClass();
                 DirectoryInfo TheFolder = new DirectoryInfo(fileFolders);
                 Hashtable ht = new Hashtable();
-                string mainPath = "D:\\MYPPT\\";
+                string mainPath = "E:\\MYPPT\\";
                 int i = TheFolder.GetDirectories().Count();
                 //遍历文件夹
                 foreach (DirectoryInfo NextFolder in TheFolder.GetDirectories())
@@ -85,19 +85,18 @@ namespace MB
                                 //app.ActivePresentation.Close();
 
                                 Presentation pptPresentation = pptApplication.Presentations.Open2007(file.FullName, MsoTriState.msoTrue, MsoTriState.msoTrue, MsoTriState.msoFalse);
-                                int master = pptPresentation.Designs.Count;
+                                //int master = pptPresentation.Designs.Count;
                                 //string s =  pptPresentation.SlideMaster.HeadersFooters.Header.Text;
                                 //Master master = pptPresentation.SlideMaster;
-                                var doc = pptPresentation.BuiltInDocumentProperties;
+                                //var doc = pptPresentation.BuiltInDocumentProperties;
                                  
                                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in pptPresentation.Slides)
                                 {
-                                    Master masters = slide.Master;
-                                    Microsoft.Office.Interop.PowerPoint.Slide sd = slide;
-                                    string ss = sd.Master.HeadersFooters.Header.Text;
+                                    //Master masters = slide.Master;
+                                    //Microsoft.Office.Interop.PowerPoint.Slide sd = slide;
+                                    //string ss = sd.Master.HeadersFooters.Header.Text;
                                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                                     {
-
                                         if (MsoTriState.msoTrue == shape.HasTextFrame)
                                         {
                                             shape.TextFrame.TextRange.Replace("第一PPT模板网", "PPT中国网-PPTCN", 0, MsoTriState.msoFalse, MsoTriState.msoFalse);
@@ -121,7 +120,7 @@ namespace MB
                                 pptinfo.Keywords = StringHelper.GetRegValue(pptinfo.Body, "<meta name=\"keywords\" content=\"(.*?)\" />");
                                 pptinfo.Description = StringHelper.GetRegValue(pptinfo.Body, "<meta name=\"description\" content=\"(.*?)\" />");
 
-                                //dal.PPTArrangeWithFile(pptinfo);
+                                dal.PPTArrangeWithFile(pptinfo);
 
                                 if (!Directory.Exists(mainPath + "ppt\\" + pptinfo.Id + "\\"))
                                 {
